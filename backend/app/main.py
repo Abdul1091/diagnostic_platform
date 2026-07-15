@@ -9,11 +9,11 @@ async def lifespan(app: FastAPI):
     Handle application startup and shutdown events.
     """
 
-    logger.info("🚀 Starting Diagnosticcc Platform")
+    logger.info("🚀 Starting Diagnostic Platform")
 
     yield
 
-    logger.info("🛑 Shutting down Diagnosticcc Platform")
+    logger.info("🛑 Shutting down Diagnostic Platform")
 
 
 app = FastAPI(
