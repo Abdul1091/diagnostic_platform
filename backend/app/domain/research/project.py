@@ -3,6 +3,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from uuid import UUID, uuid4
 
+from app.core.exceptions import ValidationError
+
 
 class ProjectStatus(Enum):
     """Lifecycle states of a research project."""
@@ -38,10 +40,18 @@ class ResearchProject:
     )
 
     def __post_init__(self) -> None:
-        """Validate the project after initialization."""
+        """Validate project state."""
 
         if not self.title.strip():
-            raise ValueError("Project title cannot be empty.")
+            raise ValidationError(
+                entity="ResearchProject",
+                field="title",
+                message="Project title cannot be empty.",
+            )
 
         if not self.research_question.strip():
-            raise ValueError("Research question cannot be empty.")
+            raise ValidationError(
+                entity="ResearchProject",
+                field="research_question",
+                message="Research question cannot be empty.",
+            )
