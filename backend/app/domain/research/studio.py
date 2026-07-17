@@ -2,6 +2,10 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 from enum import Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.domain.research.workspace import DesignWorkspace
 
 from app.core.exceptions import ValidationError
 
@@ -45,6 +49,8 @@ class ResearchStudio:
 
     status: StudioStatus = StudioStatus.PLANNING
 
+    workspaces: list["DesignWorkspace"] = field(default_factory=list)
+
     created_at: datetime = field(
         default_factory=lambda: datetime.now(UTC)
     )
@@ -52,6 +58,33 @@ class ResearchStudio:
     updated_at: datetime = field(
         default_factory=lambda: datetime.now(UTC)
     )
+
+    def add_workspace(self, workspace: "DesignWorkspace") -> None:
+        """
+        Add a Design Workspace to the Research Studio.
+
+        Raises:
+            ValidationError:
+                If the workspace already exists in the studio.
+        """
+
+        if workspace in self.workspaces:
+            raise ValidationError(
+                entity="ResearchStudio",
+                field="workspaces",
+                message="Design Workspace already exists in this studio.",
+            )
+
+        self.workspaces.append(workspace)
+        self.updated_at = datetime.now(UTC)
+
+    @property
+    def workspace_count(self) -> int:
+        """
+        Return the number of workspaces.
+        """
+
+        return len(self.workspaces)
 
     def __post_init__(self) -> None:
         """Validate studio state."""
